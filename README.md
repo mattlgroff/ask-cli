@@ -1,5 +1,7 @@
 ### Ask OpenAI GPT from the bash command line
 
+Inspired by [this article by Norah Sakal](https://norahsakal.com/blog/ask-gpt3-programming-questions-in-terminal) on asking OpenAI questions from the terminal using python.
+
 # Instructions
 In my `~/.bashrc` I added the following lines:
 ```bash
