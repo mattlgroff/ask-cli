@@ -10,7 +10,7 @@ def ask_openai(query)
   loading_thread = Thread.new do
     i = 0
     loop do
-      puts "\rLoading" + "." * ((i % 3) + 1) + " " * (3 - i)
+      print "\rLoading" + "." * ((i % 3) + 1) + " " * (3 - i)
       sleep 0.5
       i = (i + 1) % 3
     end
@@ -44,7 +44,7 @@ def ask_openai(query)
   end
 
   loading_thread.kill
-  puts "\r#{' ' * 20}\r" # Clear the loading message
+  print "\r#{' ' * 20}\r" # Clear the loading message
 
   if response.code == '200'
     body = JSON.parse(response.body)
