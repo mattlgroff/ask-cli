@@ -7,10 +7,10 @@ In my `~/.bashrc` I added the following lines:
 ```bash
 export OPEN_AI_API_KEY="myopenaiapikey"
 
-alias ask='ruby ~/ask/ask.rb'
+alias ask='ruby ~/ask-cli/ask.rb'
 ```
 
-Then I run `source ~/.bashrc` and I can use the `ask` command from the command line. I have my OpenAI API key in the environment variable `OPEN_AI_API_KEY`. The location of your `ask.rb` file may be different, but I put mine in my home directory in a folder called `ask`.
+Then I run `source ~/.bashrc` and I can use the `ask` command from the command line. I have my OpenAI API key in the environment variable `OPEN_AI_API_KEY`. The location of your `ask.rb` file may be different, but I put mine in my home directory in a folder called `ask-cli`.
 
 # Usage
 ```bash
