@@ -1,4 +1,4 @@
-### Ask OpenAI GPT from the bash command line
+### Ask OpenAI's Chat Completion API from the bash command line
 
 Inspired by [this article by Norah Sakal](https://norahsakal.com/blog/ask-gpt3-programming-questions-in-terminal) on asking OpenAI questions from the terminal using python.
 
@@ -17,7 +17,7 @@ Then I run `source ~/.bashrc` and I can use the `ask` command from the command l
   ask "How do I extract my discord file?"
 ```
 
-This small program will pass OpenAI the contents of `pwd` and `ls -al` so it has more context about what you're asking and can give you a better answer based on the context of where you called the file in your terminal.
+This script will use the Function Calling feature of the OpenAI Chat Completion API to run commands such as `ls` and `pwd` to get extra context for the question. See a list of available functions further below in this README.
 
 In this example you can see how the extra context is helpful:
 ```bash
