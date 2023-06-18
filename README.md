@@ -41,7 +41,7 @@ Here's an example of GPT 3.5 Turbo vs GPT-4
 
 ## GPT 3.5 Turbo
 ```bash
-matt@WSL2:~/working$ ask "What day is it tomorrow?"
+matt@linux:~/working$ ask "What day is it tomorrow?"
 Calling function: date
 Arguments: {}
 Calling function: date
@@ -56,10 +56,21 @@ Tomorrow is June 18, 2023.
 
 ## GPT-4
 ```bash
-matt@WSL2:~/working$ ask "What day is it tomorrow?"
+matt@linux:~/working$ ask "What day is it tomorrow?"
 Calling function: date
 Arguments: {}
 Tomorrow is June 18, 2023.
 ```
 
 As you can see, GPT-4 is much more efficient and doesn't need to call the function 50 times to get the answer. GPT-4 is more expensive but it's definitely more effective.
+
+# Available Functions for Function Calling
+
+This script supports several Ruby functions that Ask CLI can call. You can add more functions to the `functions.rb` file if you want to add more functionality. Here are the functions that are currently supported:
+
+- `ls(directory)`: Get the contents of a specified directory.
+- `pwd`: Get the current directory.
+- `whoami`: Get the current user. Useful if you need to find a home directory or something specific to the current user.
+- `grep(pattern, file)`: Search for PATTERN in each FILE or standard input. FILE can be a file or a directory. If it's a directory, the command will perform a recursive search.
+- `cat(file)`: Concatenate a single file to standard output.
+- `date`: Get the current date and time in the format 'Month Day, Year @ Hour:Minute:Second AM/PM'.
