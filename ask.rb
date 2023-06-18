@@ -2,39 +2,13 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'thread'
-
-def pwd
-  `pwd`.strip
-end
-
-def ls
-  `ls -al`.gsub(/\s+/, ' ').strip
-end
+require_relative 'functions'
 
 def make_openai_request(query, previous_messages = [])
-  function_definitions = [
-    {
-      "name" => "pwd",
-      "description" => "Get the current directory",
-      "parameters" => {
-        "type" => "object",
-        "properties" => {}
-      },
-    },
-    {
-      "name" => "ls",
-      "description" => "Get the contents of the current directory",
-      "parameters" => {
-        "type" => "object",
-        "properties" => {}
-      },
-    },
-  ]
-
   messages = [
     {
       "role" => "system",
-      "content" => "You are a helpful assistant being asked questions from a command line interface."
+      "content" => "You are a helpful assistant being asked questions from a linux command line interface. The current user's username is #{whoami}."
     },
     {
       "role" => "user",
@@ -47,7 +21,7 @@ def make_openai_request(query, previous_messages = [])
   request["Authorization"] = "Bearer #{ENV['OPEN_AI_API_KEY']}"
   request["Content-Type"] = "application/json"
   request.body = {
-    "model" => "gpt-3.5-turbo-0613",
+    "model" => "gpt-4-0613",
     "messages" => messages,
     "functions" => function_definitions,
     "function_call" => "auto",
@@ -72,21 +46,62 @@ def process_openai_response(response, query, previous_messages = [])
     last_message = body['choices'][0]['message']
 
     if last_message['function_call']
-      case last_message['function_call']['name']
+      function_name = last_message['function_call']['name']
+      arguments = JSON.parse(last_message['function_call']['arguments'])
+      
+      # Log the function name and arguments
+      puts "Calling function: #{function_name}"
+      puts "Arguments: #{arguments}"
+
+      case function_name
+      when 'ls'
+        directory = JSON.parse(last_message['function_call']['arguments'])["directory"] || "."
+        begin
+          function_response = ls(directory)
+          previous_messages += [{"role" => "function", "name" => "ls", "content" => function_response}]
+          response = make_openai_request(query, previous_messages)
+          process_openai_response(response, query, previous_messages)
+        rescue => e
+          puts e.message
+        end
       when 'pwd'
-        puts "Calling function: pwd"
         function_response = pwd
         previous_messages += [{"role" => "function", "name" => "pwd", "content" => function_response}]
         response = make_openai_request(query, previous_messages)
         process_openai_response(response, query, previous_messages)
-      when 'ls'
-        puts "Calling function: ls"
-        function_response = ls
-        previous_messages += [{"role" => "function", "name" => "ls", "content" => function_response}]
+      when 'whoami'
+        function_response = whoami
+        previous_messages += [{"role" => "function", "name" => "whoami", "content" => function_response}]
         response = make_openai_request(query, previous_messages)
         process_openai_response(response, query, previous_messages)
+      when 'grep'
+        pattern = arguments["pattern"]
+        file = arguments["file"]
+        begin
+          function_response = grep(pattern, file)
+          previous_messages += [{"role" => "function", "name" => "grep", "content" => function_response}]
+          response = make_openai_request(query, previous_messages)
+          process_openai_response(response, query, previous_messages)
+        rescue => e
+          puts e.message
+        end
+      when 'cat'
+        file = arguments["file"]
+        begin
+          function_response = cat(file)
+          previous_messages += [{"role" => "function", "name" => "cat", "content" => function_response}]
+          response = make_openai_request(query, previous_messages)
+          process_openai_response(response, query, previous_messages)
+        rescue => e
+          puts e.message
+        end
+      when 'date'
+        function_response = date
+        previous_messages += [{"role" => "function", "name" => "date", "content" => function_response}]
+        response = make_openai_request(query, previous_messages)
+        process_openai_response(response, query, previous_messages)      
       else
-        raise "Unknown function: #{last_message['function_call']['name']}"
+        raise "Unknown function: #{function_name}"
       end
     elsif last_message['content']
       content = last_message['content'].strip
