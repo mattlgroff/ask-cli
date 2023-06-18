@@ -109,4 +109,4 @@ Having a history is useful to keep in the chat context since it remembers the la
 ]
 ```
 
-I would love to have history be based on the current terminal session, but I don't know how to do that yet. If you know how to do that, please let me know!
+I would love to have history be based on the current terminal session so you wouldn't have to manage a history file, but I don't know how to do that yet. If you know how to do that, please let me know!
