@@ -74,3 +74,39 @@ This script supports several Ruby functions that Ask CLI can call. You can add m
 - `grep(pattern, file)`: Search for PATTERN in each FILE or standard input. FILE can be a file or a directory. If it's a directory, the command will perform a recursive search.
 - `cat(file)`: Concatenate a single file to standard output.
 - `date`: Get the current date and time in the format 'Month Day, Year @ Hour:Minute:Second AM/PM'.
+
+# History
+By default, chat history is saved in your `ask-cli` folder in a file called `history.json` in the same directory as `ask.rb`. If your history gets so long that you need to delete it (going over token limits or just want a fresh start), just delete the `history.json` file and it will be recreated the next time you run the script.
+
+Having a history is useful to keep in the chat context since it remembers the last question asked and the last answer received. For example:
+
+```json
+[
+  {
+    "role": "user",
+    "content": "What directory am I in?"
+  },
+  {
+    "role": "assistant",
+    "content": "You are in the `/home/matt/ask-cli` directory."
+  },
+  {
+    "role": "user",
+    "content": "What files are in that directory?"
+  },
+  {
+    "role": "assistant",
+    "content": "The files in the `/home/matt/ask-cli` directory are:\n\n- `.git` (directory)\n- `README.md`\n- `ask.rb`\n- `functions.rb`\n- `history.json`"
+  },
+  {
+    "role": "user",
+    "content": "What files are in the parent directory?"
+  },
+  {
+    "role": "assistant",
+    "content": "The files and directories in the parent directory are:\n\n- `.angular-config.json`\n- `.aws`\n- `.azure`\n- `.bash_completion`\n- `.bash_history`\n- `.bash_logout`\n- `.bash_profile`\n- `.bashrc`\n- `.bun`\n- `.bundle`\n- `.cache`\n- `.config`\n- `.cspell`\n- `.daml`\n- `.docker`\n- `.dotnet`\n- `.expo`\n- `.gitconfig`\n- `.gnupg`\n- `.ionic`\n- `.kube`\n- `.lesshst`\n- `.local`\n- `.mkshrc`\n- `.mongodb`\n- `.motd_shown`\n- `.npm`\n- `.npmrc`\n- `.nuget`\n- `.nvm`\n- `.profile`\n- `.psql_history`\n- `.rvm`\n- `.ssh`\n- `.sudo_as_admin_successful`\n- `.templateengine`\n- `.vscode-server`\n- `.vstsnpmauthrc`\n- `.wget-hsts`\n- `.yarn`\n- `.yarnrc`\n- `.zlogin`\n- `.zshrc`\n- `ask-cli`\n- `aws`\n- `awscliv2.zip`\n- `working`\n- `wsl`"
+  }
+]
+```
+
+I would love to have history be based on the current terminal session, but I don't know how to do that yet. If you know how to do that, please let me know!
