@@ -64,28 +64,6 @@ def ping(address)
   `ping -c 4 #{address}`.strip
 end
 
-def fetch_hacker_news(type, page, per_page)
-  begin
-    base_url = "https://hacker-news.firebaseio.com/v0/"
-    uri = URI("#{base_url}#{type}stories.json")
-    response = Net::HTTP.get(uri)
-    ids = JSON.parse(response)
-    start_index = (page - 1) * per_page
-    end_index = start_index + per_page - 1
-
-    stories = ids[start_index..end_index].map do |id|
-      item_uri = URI("#{base_url}item/#{id}.json")
-      item_response = Net::HTTP.get(item_uri)
-      JSON.parse(item_response)
-    end
-    # Return the stories as a JSON formatted string
-    return JSON.pretty_generate(stories)
-  rescue Exception => e
-    puts "Error fetching Hacker News stories: #{e.message}"
-    return "[]"
-  end
-end
-
 def do_math_with_wolfram(input)
   base_url = "https://www.wolframalpha.com/api/v1/llm-api"
   app_id = ENV['WOLFRAM_APP_ID']  # Get the AppID from environment variable
@@ -105,95 +83,6 @@ def do_math_with_wolfram(input)
   
   return response
 end
-
-def get_current_weather(lat, lon)
-  begin
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-    app_id = ENV['OPEN_WEATHER_API_KEY']  
-
-    if app_id.nil?
-      raise "OPEN_WEATHER_API_KEY is not set in the environment variables"
-    end
-
-    final_url = "#{base_url}?lat=#{lat}&lon=#{lon}&units=imperial&appid=#{app_id}"
-  
-    uri = URI(final_url)
-    response = Net::HTTP.get(uri)
-  
-    return response
-  rescue Exception => e
-    puts "Error fetching current weather data: #{e.message}"
-    return "{}"
-  end
-end
-
-def get_weather_forecast(lat, lon)
-  begin
-    base_url = "https://api.openweathermap.org/data/2.5/forecast"
-    app_id = ENV['OPEN_WEATHER_API_KEY']  
-
-    if app_id.nil?
-      raise "OPEN_WEATHER_API_KEY is not set in the environment variables"
-    end
-
-    final_url = "#{base_url}?lat=#{lat}&lon=#{lon}&units=imperial&appid=#{app_id}"
-  
-    uri = URI(final_url)
-    response = Net::HTTP.get(uri)
-
-    puts app_id
-    puts response
-  
-    return response
-  rescue Exception => e
-    puts "Error fetching weather forecast data: #{e.message}"
-    return "{}"
-  end
-end
-
-def geocode_location_by_city(city, limit=1)
-  begin
-    base_url = "http://api.openweathermap.org/geo/1.0/direct"
-    app_id = ENV['OPEN_WEATHER_API_KEY']  
-
-    if app_id.nil?
-      raise "OPEN_WEATHER_API_KEY is not set in the environment variables"
-    end
-
-    final_url = "#{base_url}?q=#{CGI.escape(city)}&limit=#{limit}&appid=#{app_id}"
-  
-    uri = URI(final_url)
-    response = Net::HTTP.get(uri)
-  
-    return response
-  rescue Exception => e
-    puts "Error geocoding city: #{e.message}"
-    return "[]"
-  end
-end
-
-def geocode_location_by_zip(zip, country_code)
-  begin
-    base_url = "http://api.openweathermap.org/geo/1.0/zip"
-    app_id = ENV['OPEN_WEATHER_API_KEY']  
-
-    if app_id.nil?
-      raise "OPEN_WEATHER_API_KEY is not set in the environment variables"
-    end
-
-    final_url = "#{base_url}?zip=#{zip},#{country_code}&appid=#{app_id}"
-  
-    uri = URI(final_url)
-    response = Net::HTTP.get(uri)
-  
-    return response
-  rescue Exception => e
-    puts "Error geocoding zip code: #{e.message}"
-    return "{}"
-  end
-end
-
-
 
 def function_definitions
   [
@@ -299,27 +188,6 @@ def function_definitions
       }
     },
     {
-      "name": "fetch_hacker_news",
-      "description": "Fetches stories from Hacker News based on the type, page, and number of stories per page. This function should be used to retrieve data from the Hacker News API in a paginated manner.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "The type of stories to fetch. Options are 'top', 'new', 'best', 'ask', 'show', 'job'."
-          },
-          "page": {
-            "type": "integer",
-            "description": "The page number of the stories to fetch. Page numbers start from 1."
-          },
-          "per_page": {
-            "type": "integer",
-            "description": "The number of stories to fetch per page. For instance, if 'per_page' is set to 20, the function will fetch 20 stories per page."
-          }
-        }
-      },
-    },
-    {
       "name": "do_math_with_wolfram",
       "description": "Perform mathematical calculations or query data using Wolfram Alpha LLM API.",
       "parameters": {
@@ -331,74 +199,6 @@ def function_definitions
           }
         }
       }
-    },
-    {
-      "name": "get_current_weather",
-      "description": "Fetches the current weather data from OpenWeatherMap API.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "lat": {
-            "type": "number",
-            "description": "The latitude of the location to fetch current weather data for."
-          },
-          "lon": {
-            "type": "number",
-            "description": "The longitude of the location to fetch current weather data for."
-          }
-        }
-      }
-    },
-    {
-      "name": "get_weather_forecast",
-      "description": "Fetches the weather forecast from OpenWeatherMap API.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "lat": {
-            "type": "number",
-            "description": "The latitude of the location to fetch weather forecast data for."
-          },
-          "lon": {
-            "type": "number",
-            "description": "The longitude of the location to fetch weather forecast data for."
-          }
-        }
-      }
-    },
-    {
-      "name": "geocode_location_by_city",
-      "description": "Fetches the latitude and longitude of a given city from OpenWeatherMap API.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "city": {
-            "type": "string",
-            "description": "The name of the city to fetch coordinates for."
-          },
-          "limit": {
-            "type": "integer",
-            "description": "Number of the locations in the API response (up to 5 results can be returned in the API response)."
-          }
-        }
-      }
-    },
-    {
-      "name": "geocode_location_by_zip",
-      "description": "Fetches the latitude and longitude of a given zip code from OpenWeatherMap API.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "zip": {
-            "type": "string",
-            "description": "The zip code to fetch coordinates for."
-          },
-          "country_code": {
-            "type": "string",
-            "description": "The ISO 3166 country code for the zip code."
-          }
-        }
-      }
-    }     
+    }  
   ]
 end

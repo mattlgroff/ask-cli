@@ -7,7 +7,6 @@ In my `~/.bashrc` I added the following lines:
 ```bash
 export OPEN_AI_API_KEY="myopenaiapikey"
 export WOLFRAM_APP_ID="mywolframappid"
-export OPEN_WEATHER_API_KEY="myopenweatherapikey"
 
 alias ask='ruby ~/ask-cli/ask.rb'
 ```
@@ -79,12 +78,7 @@ This script supports several Ruby functions that Ask CLI can call. You can add m
 - `curl(url)`: Make a curl request to a specified URL.
 - `top`: Get the top processes running on the system.
 - `ping(host)`: Ping a specified host.
-- `fetch_hacker_news`: Get the top or new stories from Hacker News.
 - `do_math_with_wolfram(query)`: Ask Wolfram Alpha to do math for you. For example, "What is 2 + 2?" or "What is the square root of 4?".
-- `get_current_weather(location)`: Get the current weather for a specified lat/lon. For example, "What is the weather in Seattle?".
-- `get_weather_forecast(location)`: Get the weather forecast for a specified lat/lon. For example, "What is the weather forecast for Seattle?".
-- `geocode_location_by_city`: Get the lat/lon for a specified city. For example, "What is the lat/lon for Seattle?".
-- `geocode_location_by_zip`: Get the lat/lon for a specified zip code. For example, "What is the lat/lon for 98101?".
 
 # History
 By default, chat history is saved in your `ask-cli` folder in a file called `history.json` in the same directory as `ask.rb`. If your history gets so long that you need to delete it (going over token limits or just want a fresh start), just delete the `history.json` file and it will be recreated the next time you run the script.

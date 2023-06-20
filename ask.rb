@@ -108,51 +108,10 @@ def process_openai_response(response, query, conversation_history, function_mess
         rescue => e
           puts e.message
         end
-      when 'fetch_hacker_news'
-        type = arguments["type"]
-        page = arguments["page"].to_i
-        per_page = arguments["per_page"].to_i
-        begin
-          function_response = fetch_hacker_news(type, page, per_page)
-        rescue => e
-          puts e.message
-        end
       when 'do_math_with_wolfram'
         input = arguments["input"]
         begin
           function_response = do_math_with_wolfram(input)
-        rescue => e
-          puts e.message
-        end
-      when 'get_current_weather'
-        lat = arguments["lat"]
-        lon = arguments["lon"]
-        begin
-          function_response = get_current_weather(lat, lon)
-        rescue => e
-          puts e.message
-        end
-      when 'get_weather_forecast'
-        lat = arguments["lat"]
-        lon = arguments["lon"]
-        begin
-          function_response = get_weather_forecast(lat, lon)
-        rescue => e
-          puts e.message
-        end
-      when 'geocode_location_by_city'
-        city = arguments["city"]
-        limit = arguments["limit"].to_i
-        begin
-          function_response = geocode_location_by_city(city, limit)
-        rescue => e
-          puts e.message
-        end
-      when 'geocode_location_by_zip'
-        zip = arguments["zip"]
-        country_code = arguments["country_code"]
-        begin
-          function_response = geocode_location_by_zip(zip, country_code)
         rescue => e
           puts e.message
         end
