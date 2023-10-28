@@ -34,14 +34,20 @@ def grep(pattern, file)
   end
 end
 
-def cat(file)
-  response = `cat #{file} 2>&1`.gsub(/\s+/, ' ').strip
+def cat(file, grep_pattern = nil)
+  if grep_pattern
+    response = `cat #{file} | grep '#{grep_pattern}' 2>&1`.gsub(/\s+/, ' ').strip
+  else
+    response = `cat #{file} 2>&1`.gsub(/\s+/, ' ').strip
+  end
+  
   if $?.success?
     return response
   else
     raise "Error executing command: cat #{file}. Error message: #{response}"
   end
 end
+
 
 def date
   response = `date '+%B %d, %Y @ %I:%M:%S %p'`.strip
@@ -62,26 +68,6 @@ end
 
 def ping(address)
   `ping -c 4 #{address}`.strip
-end
-
-def do_math_with_wolfram(input)
-  base_url = "https://www.wolframalpha.com/api/v1/llm-api"
-  app_id = ENV['WOLFRAM_APP_ID']  # Get the AppID from environment variable
-  if app_id.nil?
-    raise "WOLFRAM_APP_ID is not set in the environment variables"
-  end
-  
-  # URL encode the input and form the final URL
-  input_encoded = CGI.escape(input)
-  final_url = "#{base_url}?input=#{input_encoded}&appid=#{app_id}&maxchars=5000"
-  
-  # Make a GET request
-  uri = URI(final_url)
-  response = Net::HTTP.get(uri)
-  
-  # You may want to add error handling here depending on your use case
-  
-  return response
 end
 
 def function_definitions
@@ -134,13 +120,18 @@ def function_definitions
     },
     {
       "name" => "cat",
-      "description" => "Concatenate a single file to standard output.",
+      "description" => "Concatenate a single file to standard output. Optionally, filter lines with a grep pattern.",
       "parameters" => {
         "type" => "object",
         "properties" => {
           "file": {
             "type": "string",
             "description": "File to concatenate."
+          },
+          "grep_pattern": {
+            "type": "string",
+            "description": "Optional grep pattern to filter lines. Example use might be to just grab function definitions in a file.",
+            "optional": true
           }
         }
       },
@@ -186,19 +177,6 @@ def function_definitions
           }
         }
       }
-    },
-    {
-      "name": "do_math_with_wolfram",
-      "description": "Perform mathematical calculations or query data using Wolfram Alpha LLM API.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "input": {
-            "type": "string",
-            "description": "The mathematical expression or query for Wolfram Alpha LLM API."
-          }
-        }
-      }
-    }  
+    }
   ]
 end

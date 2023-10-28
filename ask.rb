@@ -18,13 +18,13 @@ def save_conversation_history(history)
   end
 end
 
-def make_openai_request(query, conversation_history, function_messages)
+def make_openai_request(query, conversation_history)
   messages = [
     {
       "role" => "system",
       "content" => "You are a helpful assistant being asked questions from a linux command line interface. The current user's username is #{whoami}."
     }
-  ] + conversation_history + function_messages
+  ] + conversation_history
 
   uri = URI.parse("https://api.openai.com/v1/chat/completions")
   request = Net::HTTP::Post.new(uri)
@@ -50,7 +50,7 @@ def make_openai_request(query, conversation_history, function_messages)
   response
 end
 
-def process_openai_response(response, query, conversation_history, function_messages)
+def process_openai_response(response, query, conversation_history)
   if response.code == '200'
     body = JSON.parse(response.body)
     last_message = body['choices'][0]['message']
@@ -85,8 +85,9 @@ def process_openai_response(response, query, conversation_history, function_mess
         end
       when 'cat'
         file = arguments["file"]
+        grep_pattern = arguments["grep_pattern"] || nil
         begin
-          function_response = cat(file)
+          function_response = cat(file, grep_pattern)
         rescue => e
           puts e.message
         end
@@ -108,20 +109,13 @@ def process_openai_response(response, query, conversation_history, function_mess
         rescue => e
           puts e.message
         end
-      when 'do_math_with_wolfram'
-        input = arguments["input"]
-        begin
-          function_response = do_math_with_wolfram(input)
-        rescue => e
-          puts e.message
-        end
       else
         raise "Unknown function: #{function_name}"
       end
 
-      function_messages << {"role" => "function", "name" => function_name, "content" => function_response}
-      response = make_openai_request(query, conversation_history, function_messages)
-      process_openai_response(response, query, conversation_history, function_messages)
+      conversation_history << {"role" => "function", "name" => function_name, "content" => function_response}
+      response = make_openai_request(query, conversation_history)
+      process_openai_response(response, query, conversation_history)
 
     elsif last_message['content']
       content = last_message['content'].strip
@@ -155,5 +149,5 @@ conversation_history << {
   "content" => ARGV[0]
 }
 
-response = make_openai_request(ARGV[0], conversation_history, function_messages)
-process_openai_response(response, ARGV[0], conversation_history, function_messages)
+response = make_openai_request(ARGV[0], conversation_history)
+process_openai_response(response, ARGV[0], conversation_history)
