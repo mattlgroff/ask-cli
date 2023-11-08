@@ -1,1 +1,4 @@
 history.json
+*.png
+request_body.json
+response.txt

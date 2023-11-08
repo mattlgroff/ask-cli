@@ -6,7 +6,6 @@ Inspired by [this article by Norah Sakal](https://norahsakal.com/blog/ask-gpt3-p
 In my `~/.bashrc` I added the following lines:
 ```bash
 export OPEN_AI_API_KEY="myopenaiapikey"
-export WOLFRAM_APP_ID="mywolframappid"
 
 alias ask='ruby ~/ask-cli/ask.rb'
 ```
@@ -78,7 +77,6 @@ This script supports several Ruby functions that Ask CLI can call. You can add m
 - `curl(url)`: Make a curl request to a specified URL.
 - `top`: Get the top processes running on the system.
 - `ping(host)`: Ping a specified host.
-- `do_math_with_wolfram(query)`: Ask Wolfram Alpha to do math for you. For example, "What is 2 + 2?" or "What is the square root of 4?".
 
 # History
 By default, chat history is saved in your `ask-cli` folder in a file called `history.json` in the same directory as `ask.rb`. If your history gets so long that you need to delete it (going over token limits or just want a fresh start), just delete the `history.json` file and it will be recreated the next time you run the script.
